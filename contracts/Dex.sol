@@ -20,6 +20,7 @@ contract Dex {
         require(msg.sender == owner, "only owner can call this contract");
         _;
     }
+
     function sell() external onlyOwner {
         uint256 allowance = associatedToken.allowance(
             msg.sender,
@@ -31,6 +32,12 @@ contract Dex {
             address(this),
             allowance
         );
+        require(sent, "transfer failed");
+    }
+
+    function withdrawToken() external onlyOwner {
+        uint balance = associatedToken.balanceOf(address(this));
+        bool sent = associatedToken.transfer(msg.sender, balance);
         require(sent, "transfer failed");
     }
 }
