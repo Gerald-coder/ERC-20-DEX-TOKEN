@@ -59,4 +59,8 @@ contract Dex {
         bool sent = associatedToken.transfer(msg.sender, _numTokens);
         require(sent, "token not sent to buyer");
     }
+
+    function getBalance() public view returns (uint256) {
+        return associatedToken.balanceOf(address(this));
+    }
 }
