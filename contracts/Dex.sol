@@ -45,4 +45,18 @@ contract Dex {
         (bool sent, ) = payable(owner).call{value: address(this).balance}("");
         require(sent, "not sent");
     }
+
+    function getPrice(uint _numTokens) public returns (uint256) {
+        return _numTokens * price;
+    }
+
+    function buy(uint _numTokens) external payable {
+        uint256 balance = associatedToken.balanceOf(address(this));
+        require(_numTokens <= balance, "no enough token to buy");
+        uint256 tokenPrice = getPrice(_numTokens);
+        require(msg.value == tokenPrice, "you need to pay for the token fully");
+
+        bool sent = associatedToken.transfer(msg.sender, _numTokens);
+        require(sent, "token not sent to buyer");
+    }
 }
