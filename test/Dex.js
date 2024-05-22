@@ -18,4 +18,11 @@ describe("Dex", () => {
     const dex = await Dex.deploy(token.address, price);
     return { dex, token, owner, addr1, addr2 };
   }
+  describe("Selling", () => {
+    it("should fail to sell", async () => {
+      const { dex, owner } = await loadFixture(deployDex);
+      expect(await dex.connect(owner).sell()).to.be.reverted;
+      //STOP
+    });
+  });
 });
