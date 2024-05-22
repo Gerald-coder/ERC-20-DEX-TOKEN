@@ -46,7 +46,7 @@ contract Dex {
         require(sent, "not sent");
     }
 
-    function getPrice(uint _numTokens) public returns (uint256) {
+    function getPrice(uint _numTokens) public view returns (uint256) {
         return _numTokens * price;
     }
 
