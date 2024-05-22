@@ -28,4 +28,9 @@ contract Token {
         );
         require(sent);
     }
+
+    function withdrawToken() external onlywner {
+        uint balance = associatedToken.balanceOf(address(this));
+        associatedToken.transfer(owner, balance);
+    }
 }
