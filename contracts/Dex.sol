@@ -40,4 +40,9 @@ contract Dex {
         bool sent = associatedToken.transfer(msg.sender, balance);
         require(sent, "transfer failed");
     }
+
+    function withdrawFunds() external onlyOwner {
+        (bool sent, ) = payable(owner).call{value: address(this).balance}("");
+        require(sent, "not sent");
+    }
 }
