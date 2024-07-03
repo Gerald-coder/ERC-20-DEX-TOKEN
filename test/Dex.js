@@ -26,6 +26,14 @@ describe("Dex", () => {
     return { addr1, addr2, dex, owner, token, bal };
   }
 
+  async function deployDexWithValue(value) {
+    const { dex } = await deployDexWithAllowance();
+    await dex.sell();
+    const numTokens = value;
+    const tokenPrice = numTokens * price;
+    return { tokenPrice, numTokens };
+  }
+
   describe("Selling", () => {
     it("should fail to sell", async () => {
       const { dex, owner } = await loadFixture(deployDex);
@@ -66,9 +74,8 @@ describe("Dex", () => {
   describe("Buy", () => {
     it("should allow user to buy", async () => {
       const { dex, addr1, token } = await deployDexWithAllowance();
-      await dex.sell();
-      const numTokens = 10;
-      const tokenPrice = numTokens * price;
+
+      const { tokenPrice, numTokens } = await deployDexWithValue(10);
       await expect(
         dex.connect(addr1).buy(numTokens, { value: tokenPrice })
       ).to.changeTokenBalances(token, [dex, addr1.address], [-10, 10]);
@@ -89,14 +96,21 @@ describe("Dex", () => {
     });
     it("owner should be able to withdraw tokens", async () => {
       const { dex, token, owner, addr1 } = await deployDexWithAllowance();
-      await dex.sell();
-      const numTokens = 10;
-      const tokenPrice = numTokens * price;
+      const { tokenPrice, numTokens } = await deployDexWithValue(10);
       await dex.connect(addr1).buy(numTokens, { value: tokenPrice });
       await expect(dex.withdrawToken()).to.changeTokenBalances(
         token,
         [dex, owner.address],
         [-90, 90]
+      );
+    });
+    it("should allow owner to withdraw funds", async () => {
+      const { owner, dex, addr1 } = await deployDexWithAllowance();
+      const { tokenPrice, numTokens } = await deployDexWithValue(10);
+      await dex.connect(addr1).buy(numTokens, { value: tokenPrice });
+      await expect(dex.connect(owner).withdrawFunds()).to.changeEtherBalances(
+        [owner.address, dex],
+        [tokenPrice, -tokenPrice]
       );
     });
   });
