@@ -20,7 +20,6 @@ module.exports = buildModule("TokenModule", (m) => {
 
 //AFTER DEPLOYING
 /**
- 
  npx hardhat ignition deploy ignition/modules/Token.js --network localhost
 Hardhat Ignition 🚀
 
