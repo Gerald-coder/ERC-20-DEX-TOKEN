@@ -68,5 +68,13 @@ describe("Dex", () => {
         dex.connect(addr1).buy(10, { value: 1000 })
       ).to.changeTokenBalances(token, [dex.address, addr1.address], [-10, 10]);
     });
+    it("should not allow user to buy invalid number of tokens", async () => {
+      const { addr1, dex } = await deployDexWithAllowance();
+      expect(dex.connect(addr1).buy(10000)).to.be.reverted;
+    });
+    it("should not allow user to buy with invalid value", async () => {
+      const { addr1, dex } = await deployDexWithAllowance();
+      expect(dex.connect(addr1).buy(6, { value: 610 })).to.be.reverted;
+    });
   });
 });
