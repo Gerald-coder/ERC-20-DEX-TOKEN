@@ -61,4 +61,12 @@ describe("Dex", () => {
       expect(await dex.getPrice(10)).to.be.equal(price * 10);
     });
   });
+  describe("Buy", () => {
+    it("should allow user to buy", async () => {
+      const { dex, addr1, token } = await deployDexWithAllowance();
+      expect(
+        dex.connect(addr1).buy(10, { value: 1000 })
+      ).to.changeTokenBalances(token, [dex.address, addr1.address], [-10, 10]);
+    });
+  });
 });
