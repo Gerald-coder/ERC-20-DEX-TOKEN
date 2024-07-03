@@ -23,14 +23,13 @@ describe("Dex", () => {
     const { addr1, addr2, dex, owner, token } = await loadFixture(deployDex);
     await token.approve(dex.getAddress(), 100);
     const bal = await token.allowance(owner.address, dex.getAddress());
-    return { addr1, addr2, dex, owner, token };
+    return { addr1, addr2, dex, owner, token, bal };
   }
 
   describe("Selling", () => {
     it("should fail to sell", async () => {
       const { dex, owner } = await loadFixture(deployDex);
       await expect(dex.connect(owner).sell()).to.be.reverted;
-      //STOP
     });
     it("should allow Dex to sell token", async () => {
       const { dex, owner, token } = await loadFixture(deployDex);
@@ -54,6 +53,8 @@ describe("Dex", () => {
     it("should return correct token balance", async () => {
       const { dex } = await deployDexWithAllowance();
       await dex.sell();
+      // const price = await dex.getPrice();
+      // console.log(price, "price2");
       expect(await dex.getBalance()).to.be.equal(100);
     });
     it("should return the correct token price", async () => {
@@ -61,20 +62,44 @@ describe("Dex", () => {
       expect(await dex.getPrice(10)).to.be.equal(price * 10);
     });
   });
+  //Fail
   describe("Buy", () => {
     it("should allow user to buy", async () => {
       const { dex, addr1, token } = await deployDexWithAllowance();
-      expect(
-        dex.connect(addr1).buy(10, { value: 1000 })
-      ).to.changeTokenBalances(token, [dex.address, addr1.address], [-10, 10]);
+      await dex.sell();
+      const numTokens = 10;
+      const tokenPrice = numTokens * price;
+      await expect(
+        dex.connect(addr1).buy(numTokens, { value: tokenPrice })
+      ).to.changeTokenBalances(token, [dex, addr1.address], [-10, 10]);
     });
     it("should not allow user to buy invalid number of tokens", async () => {
       const { addr1, dex } = await deployDexWithAllowance();
-      expect(dex.connect(addr1).buy(10000)).to.be.reverted;
+      await expect(dex.connect(addr1).buy(10000)).to.be.reverted;
     });
     it("should not allow user to buy with invalid value", async () => {
       const { addr1, dex } = await deployDexWithAllowance();
-      expect(dex.connect(addr1).buy(6, { value: 610 })).to.be.reverted;
+      await expect(dex.connect(addr1).buy(6, { value: 610 })).to.be.reverted;
+    });
+  });
+  describe("Withdraw Tokens", () => {
+    it("Non owner should not be able to withdraw tokens", async () => {
+      const { addr1, dex } = await deployDexWithAllowance();
+      await expect(dex.connect(addr1).withdrawToken()).to.be.reverted;
+    });
+    it("owner should be able to withdraw tokens", async () => {
+      const { dex, token, owner, addr1 } = await deployDexWithAllowance();
+      await dex.sell();
+      const numTokens = 10;
+      const tokenPrice = numTokens * price;
+      await dex.connect(addr1).buy(numTokens, { value: tokenPrice });
+      await expect(dex.withdrawToken()).to.changeTokenBalances(
+        token,
+        [dex, owner.address],
+        [-90, 90]
+      );
     });
   });
 });
+
+// 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512,0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
