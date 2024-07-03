@@ -104,6 +104,8 @@ describe("Dex", () => {
         [-90, 90]
       );
     });
+  });
+  describe("Withdraw funds", () => {
     it("should allow owner to withdraw funds", async () => {
       const { owner, dex, addr1 } = await deployDexWithAllowance();
       const { tokenPrice, numTokens } = await deployDexWithValue(10);
@@ -112,6 +114,12 @@ describe("Dex", () => {
         [owner.address, dex],
         [tokenPrice, -tokenPrice]
       );
+    });
+    it("should not allow Non-owner to withdraw funds", async () => {
+      const { owner, dex, addr1 } = await deployDexWithAllowance();
+      const { tokenPrice, numTokens } = await deployDexWithValue(10);
+      await dex.connect(addr1).buy(numTokens, { value: tokenPrice });
+      await expect(dex.connect(addr1).withdrawFunds()).to.be.reverted;
     });
   });
 });
