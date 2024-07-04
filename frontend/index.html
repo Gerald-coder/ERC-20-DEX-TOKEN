@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DEX-20-Token</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="item">
+          <h2>Token Price: <span id="tokenPrice"></span></h2>
+          <button onclick="getPrice()">Update Price</button>
+        </div>
+        <div class="item">
+          <h2>Token Available: <span id="tokenAvailable"></span></h2>
+          <button onclick="getAvailableTokens()">
+            Update Tokens Available
+          </button>
+        </div>
+        <div class="item">
+          <h2>My Token Balance: <span id="tokenBalance"></span></h2>
+          <button onclick="getTokensBalance()">Update My Tokens</button>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="item">
+          <h3>Grant DEX Access</h3>
+          <input
+            type="number"
+            min="0"
+            placeholder="Enter number of tokens"
+            id="tokenGrant"
+          />
+          <button onclick="grantAccess()">Grant</button>
+        </div>
+        <div>
+            
+        </div>
+      </div>
+    </div>
+    <script
+      src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+      type="application/javascript"
+    ></script>
+    <script src="index.js"></script>
+  </body>
+</html>
