@@ -58,3 +58,8 @@ async function getTokensBalance() {
   document.getElementById("tokenBalance").innerHTML = tokenBalance;
   return tokenBalance;
 }
+async function getAvailableTokens() {
+  await getAccess();
+  const tokenAvailable = await dexContract.getBalance();
+  document.getElementById("tokenAvailable").innerHTML = tokenAvailable;
+}
