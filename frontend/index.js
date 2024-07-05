@@ -73,3 +73,10 @@ async function grantAccess() {
     .then(() => alert("success"))
     .catch((error) => alert(error));
 }
+async function sell() {
+  await grantAccess();
+  await dexContract
+    .sell()
+    .then(() => alert("success"))
+    .catch((error) => alert(error));
+}
