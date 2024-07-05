@@ -63,3 +63,13 @@ async function getAvailableTokens() {
   const tokenAvailable = await dexContract.getBalance();
   document.getElementById("tokenAvailable").innerHTML = tokenAvailable;
 }
+
+async function grantAccess() {
+  await getAccess();
+  const value = Number(document.getElementById("tokenGrant").value);
+  console.log(typeof value);
+  await tokenContract
+    .approve(dexAddress, value)
+    .then(() => alert("success"))
+    .catch((error) => alert(error));
+}
