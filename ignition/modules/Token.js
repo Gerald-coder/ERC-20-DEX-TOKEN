@@ -1,7 +1,5 @@
 const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
-const { network } = require("hardhat");
-const fs = require("fs");
-const path = require("path");
+const { ethers } = require("hardhat");
 
 // const JAN_1ST_2030 = 1893456000;
 // const ONE_GWEI = 1_000_000_000n;
